@@ -86,12 +86,12 @@
   .hero {
     position: relative;
     width: 100%;
-    height: 100vh;
-    min-height: 600px;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    padding: 120px 24px 80px;
   }
   .hero-bg {
     position: absolute;
@@ -585,13 +585,107 @@
     color: rgba(255,255,255,0.18);
     position: relative;
   }
+
+  /* ══════════════════════════════
+     COUNTDOWN
+  ══════════════════════════════ */
+  .countdown-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(2,6,14,0.6);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 10px 28px;
+    margin: 20px auto 32px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    animation: fadeUp 1.2s 0.6s cubic-bezier(.16,1,.3,1) both;
+  }
+  .countdown-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+  }
+  .countdown-sep {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+  .countdown-time {
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    font-variant-numeric: tabular-nums;
+    min-width: 52px;
+    text-align: left;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff4d4d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ══════════════════════════════
+     HERO VIDEO
+  ══════════════════════════════ */
+  .hero-video-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    margin: 28px auto 28px;
+    aspect-ratio: 16/9;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 60px rgba(3,86,197,0.35), 0 40px 80px rgba(2,6,14,0.7);
+    animation: fadeUp 1.2s 0.4s cubic-bezier(.16,1,.3,1) both;
+  }
+  .hero-play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    cursor: pointer;
+    background: rgba(2,6,14,0.4);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    transition: opacity 0.3s;
+  }
+  .hero-play-overlay.hidden { opacity: 0; pointer-events: none; }
+  .hero-play-btn {
+    width: 64px;
+    height: 64px;
+    background: var(--mid);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 14px rgba(3,86,197,0.15), 0 10px 35px rgba(3,86,197,0.6);
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .hero-play-overlay:hover .hero-play-btn {
+    transform: scale(1.12);
+    box-shadow: 0 0 0 20px rgba(3,86,197,0.1), 0 14px 50px rgba(3,86,197,0.8);
+  }
+  .hero-play-btn svg { margin-left: 4px; }
+  #heroIframeContainer iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
 </style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <span class="logo">САМИР</span>
   <a href="#video" class="hide-mob">Видео</a>
   <a href="#cases" class="hide-mob">Кейсы</a>
   <a href="#results" class="hide-mob">Результаты</a>
@@ -606,7 +700,25 @@
   <div class="hero-content">
     <div class="hero-eyebrow">Личный бренд · Momentum</div>
     <h1><span>Твой личный бренд<br>— твой главный актив</span></h1>
-    <p class="hero-sub">Мы строим сильные личные бренды, которые работают на тебя 24/7. От 65 до 31K подписчиков за 4 месяца.</p>
+    <p class="hero-sub">Мы строим сильные личные бренды, которые работают на тебя 24/7.</p>
+
+    <!-- Видео в Hero -->
+    <div class="hero-video-wrap" id="heroVideoWrapper">
+      <div class="hero-play-overlay" id="heroPlayOverlay" onclick="startHeroVideo()">
+        <div class="hero-play-btn">
+          <svg width="24" height="24" viewBox="0 0 30 30" fill="none"><path d="M10 7l14 8-14 8V7z" fill="white"/></svg>
+        </div>
+      </div>
+      <div id="heroIframeContainer"></div>
+    </div>
+
+    <!-- Таймер под видео -->
+    <div class="countdown-wrap" id="countdown">
+      <span class="countdown-label">Осталось</span>
+      <span class="countdown-sep"></span>
+      <span class="countdown-time" id="countdownTime">3:00</span>
+    </div>
+
     <a href="https://t.me/ksamird?text=%D0%A5%D0%BE%D1%87%D1%83%20%D0%B2%D1%81%D1%82%D1%83%D0%BF%D0%B8%D1%82%D1%8C%20%D0%B2%20Momentum" target="_blank" class="cta-btn">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21.8 2.15L1.55 9.77c-1.37.54-1.36 1.3-.25 1.63l5.17 1.61 2 6.37c.24.68.12.95.84.95.55 0 .8-.25 1.1-.54l2.65-2.58 5.5 4.06c1.01.56 1.74.27 1.99-.94L23.93 3.4c.36-1.43-.54-2.07-2.13-1.25z" fill="white"/></svg>
       Оставить заявку прямо сейчас
@@ -616,28 +728,6 @@
   <div class="scroll-hint">
     <span>Scroll</span>
     <div class="scroll-arrow"></div>
-  </div>
-</div>
-
-<!-- VIDEO SECTION -->
-<div class="divider"></div>
-<div class="video-section" id="video">
-  <span class="section-label">Смотри как это работает</span>
-  <h2 class="section-title">Посмотри,<br>что мы делаем</h2>
-  <p class="section-desc">Узнай подробнее о нашем подходе к построению личного бренда за считанные минуты.</p>
-
-  <div class="video-wrapper" id="videoWrapper">
-    <!-- Custom play overlay -->
-    <div class="play-overlay" id="playOverlay" onclick="startVideo()">
-      <div class="play-btn">
-        <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-          <path d="M10 7l14 8-14 8V7z" fill="white"/>
-        </svg>
-      </div>
-      <span class="play-label">Смотреть</span>
-    </div>
-    <!-- iframe loads only after click (lazy) -->
-    <div id="iframeContainer"></div>
   </div>
 </div>
 
@@ -681,11 +771,10 @@
   <h2 class="section-title">Контент, который<br>даёт миллионы<br>просмотров</h2>
 
   <div class="results-grid">
-    <div class="rc"><div class="rc-icon">🎯</div><div class="rc-num">2.1M</div><div class="rc-desc">Просмотров на одном видео клиента</div></div>
+    <div class="rc"><div class="rc-icon">🎯</div><div class="rc-num">50k–70k</div><div class="rc-desc">Среднее количество просмотров на видео</div></div>
     <div class="rc"><div class="rc-icon">🚀</div><div class="rc-num">1.8M</div><div class="rc-desc">Просмотров на вирусном ролике</div></div>
     <div class="rc"><div class="rc-icon">⚡</div><div class="rc-num">1M+</div><div class="rc-desc">Просмотров на третьем топ-видео</div></div>
     <div class="rc"><div class="rc-icon">📈</div><div class="rc-num">×478</div><div class="rc-desc">Рост аудитории за 4 месяца</div></div>
-    <div class="rc"><div class="rc-icon">💎</div><div class="rc-num">✓</div><div class="rc-desc">Верифицированный аккаунт с синей галочкой</div></div>
     <div class="rc"><div class="rc-icon">🌍</div><div class="rc-num">Global</div><div class="rc-desc">Выход на международную аудиторию</div></div>
   </div>
 </div>
@@ -734,10 +823,10 @@
     io.observe(el);
   });
 
-  // ── Video: lazy-load iframe on click ──
-  function startVideo() {
-    const overlay = document.getElementById('playOverlay');
-    const container = document.getElementById('iframeContainer');
+  // ── Hero Video ──
+  function startHeroVideo() {
+    const overlay = document.getElementById('heroPlayOverlay');
+    const container = document.getElementById('heroIframeContainer');
     overlay.classList.add('hidden');
     const iframe = document.createElement('iframe');
     iframe.src = 'https://go.screenpal.com/player/cOe0rfnT6Pi?autoplay=1';
@@ -747,6 +836,21 @@
     iframe.setAttribute('scrolling', 'no');
     container.appendChild(iframe);
   }
+
+  // ── Countdown 3:00 ──
+  (function() {
+    let total = 3 * 60;
+    const el = document.getElementById('countdownTime');
+    const tick = () => {
+      if (total <= 0) { el.textContent = '0:00'; return; }
+      total--;
+      const m = Math.floor(total / 60);
+      const s = total % 60;
+      el.textContent = m + ':' + String(s).padStart(2, '0');
+      setTimeout(tick, 1000);
+    };
+    setTimeout(tick, 1000);
+  })();
 </script>
 </body>
 </html>
